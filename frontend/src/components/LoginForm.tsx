@@ -8,16 +8,7 @@ import { LogIn, UserPlus, Shield, User, Crown } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { motion } from 'framer-motion';
 import { useRouter } from 'next/navigation';
-import Image from 'next/image'
-import logoOne from '@/public/1.png'
-import logoTwo from '@/public/2.png'
 
-// Inside your component:
-<Image 
-  src={logoOne} 
-  alt="Logo 1" 
-  className="w-full h-full object-contain" 
-/>
 
 export default function LoginForm() {
   const [email, setEmail] = useState('');
