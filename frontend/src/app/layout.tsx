@@ -1,3 +1,4 @@
+// app/layout.tsx
 import type { Metadata } from "next";
 import "./globals.css";
 import { Toaster } from "react-hot-toast";
@@ -16,6 +17,7 @@ export default function RootLayout({
     <html lang="en">
       <body className="antialiased">
         {children}
+        {/* React Hot Toast is safe, but ensure it's at the very end */}
         <Toaster position="top-right" />
       </body>
     </html>
