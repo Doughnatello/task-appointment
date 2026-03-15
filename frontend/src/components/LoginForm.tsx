@@ -10,6 +10,7 @@ import { motion } from 'framer-motion';
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 
+
 export default function LoginForm() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -21,6 +22,15 @@ export default function LoginForm() {
   const [loading, setLoading] = useState(false);
   const [isMounted, setIsMounted] = useState(false);
   const router = useRouter();
+  const [isClient, setIsClient] = useState(false);
+
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
+
+  if (!isClient) {
+    return null; // or a loading spinner
+  }
 
   useEffect(() => {
     setIsMounted(true);
