@@ -2,43 +2,41 @@
 import { createClient } from '@supabase/supabase-js'
 import { useEffect, useState, FormEvent } from 'react'
 
-// 1. Define the Task interface so TS knows what a 'task' object contains
+// 1. Define the Task shape
 interface Task {
   id: number;
   title: string;
-  created_at?: string;
 }
 
-// 2. Use the '!' non-null assertion to tell TS these variables definitely exist
+// 2. Initialize Supabase
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
   process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
 )
 
 export default function Home() {
-  // 3. Tell useState this is an array of Tasks, not an array of 'never'
   const [tasks, setTasks] = useState<Task[]>([])
   const [newTask, setNewTask] = useState<string>('')
+  const [hasMounted, setHasMounted] = useState(false)
 
+  // 3. Fetch Logic
   async function getTasks() {
     const { data, error } = await supabase
       .from('tasks')
       .select('*')
-      .order('created_at', { ascending: false })
+      .order('id', { ascending: false })
     
-    if (error) {
-      console.error('Fetch Error:', error.message)
-    } else {
-      // 4. Cast data to Task[] to satisfy the state type
-      setTasks((data as Task[]) || [])
+    if (!error && data) {
+      setTasks(data as Task[])
     }
   }
 
   useEffect(() => {
+    setHasMounted(true)
     getTasks()
   }, [])
 
-  // 5. Type the event 'e' as FormEvent to fix the 'implicit any' error
+  // 4. Add Logic
   async function addTask(e: FormEvent) {
     e.preventDefault()
     if (!newTask) return
@@ -47,12 +45,22 @@ export default function Home() {
       .from('tasks')
       .insert([{ title: newTask }])
 
-    if (error) {
-      alert(`Error: ${error.message}`) 
-    } else {
+    if (!error) {
       setNewTask('')
-      getTasks() 
+      getTasks()
+    } else {
+      alert(error.message)
     }
+  }
+
+  // PREVENT HYDRATION ERROR #418:
+  // We return a simple loading state until the browser is ready.
+  if (!hasMounted) {
+    return (
+      <main style={{ padding: '2rem' }}>
+        <h1>Loading Task Manager...</h1>
+      </main>
+    )
   }
 
   return (
@@ -64,15 +72,16 @@ export default function Home() {
           type="text" 
           value={newTask} 
           onChange={(e) => setNewTask(e.target.value)}
-          placeholder="What needs to be done?"
+          placeholder="New task..."
+          style={{ padding: '8px', marginRight: '8px' }}
         />
-        <button type="submit">Add Task</button>
+        <button type="submit" style={{ padding: '8px 16px' }}>Add Task</button>
       </form>
 
-      <div id="tasks-container">
-        {tasks.length === 0 ? <p>No tasks found.</p> : (
+      <div>
+        {tasks.length === 0 ? <p>No tasks yet.</p> : (
           tasks.map(task => (
-            <p key={task.id} style={{ borderBottom: '1px solid #ccc', padding: '0.5rem 0' }}>
+            <p key={task.id} style={{ borderBottom: '1px solid #eee', padding: '8px 0' }}>
               {task.title}
             </p>
           ))
