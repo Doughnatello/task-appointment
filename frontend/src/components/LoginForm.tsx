@@ -106,12 +106,12 @@ export default function LoginForm() {
         >
           <div className="text-center mb-10">
             <div className="flex justify-center gap-6 mb-12">
-              <div className="w-28 h-28 bg-white/20 rounded-[2.5rem] flex items-center justify-center border border-white/100 shadow-2xl backdrop-white p-1">
+              {/* <div className="w-28 h-28 bg-white/20 rounded-[2.5rem] flex items-center justify-center border border-white/100 shadow-2xl backdrop-white p-1">
                 <img src="/2.png" alt="Logo 1" className="w-full h-full object-contain" />
               </div>
               <div className="w-28 h-28 bg-white/20 rounded-[2.5rem] flex items-center justify-center border border-white/100 shadow-2xl backdrop-white p-1">
                 <img src="/1.png" alt="Logo 2" className="w-full h-full object-contain" />
-              </div>
+              </div> */}
             </div>
             <h2 className="text-3xl font-bold text-white mb-2">{isLogin ? 'Welcome Back' : 'Create Account'}</h2>
           </div>
