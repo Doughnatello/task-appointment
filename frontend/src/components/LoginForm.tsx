@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react'; // Consolidated imports
 import { supabase } from '@/lib/supabase';
 import type { Role } from '@/lib/supabase';
 import { toast } from 'react-hot-toast';
@@ -8,8 +8,6 @@ import { LogIn, UserPlus, Shield, User, Crown } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { motion } from 'framer-motion';
 import { useRouter } from 'next/navigation';
-import { useEffect } from 'react';
-
 
 export default function LoginForm() {
   const [email, setEmail] = useState('');
@@ -20,18 +18,10 @@ export default function LoginForm() {
   const [role, setRole] = useState<Role>('employee');
   const [isLogin, setIsLogin] = useState(true);
   const [loading, setLoading] = useState(false);
-  const [isMounted, setIsMounted] = useState(false);
+  const [isMounted, setIsMounted] = useState(false); // We only need one guard
   const router = useRouter();
-  const [isClient, setIsClient] = useState(false);
 
-  useEffect(() => {
-    setIsClient(true);
-  }, []);
-
-  if (!isClient) {
-    return null; // or a loading spinner
-  }
-
+  // Single source of truth for hydration
   useEffect(() => {
     setIsMounted(true);
   }, []);
@@ -81,7 +71,6 @@ export default function LoginForm() {
           },
         });
         if (error) throw error;
-        // Brief delay to allow the DB trigger to create the profile
         await new Promise(resolve => setTimeout(resolve, 1000));
         toast.success('Registration successful!');
       }
@@ -98,7 +87,10 @@ export default function LoginForm() {
     { id: 'employee', label: 'Employee', icon: User },
   ];
 
-  if (!isMounted) return null;
+  // Prevent hydration mismatch by returning null until mounted
+  if (!isMounted) {
+    return null;
+  }
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-slate-950 overflow-hidden relative p-4">
@@ -209,6 +201,7 @@ export default function LoginForm() {
 
             <button
               disabled={loading}
+              type="submit"
               className="w-full bg-primary hover:bg-primary/90 text-white font-bold py-4 rounded-xl shadow-lg shadow-primary/20 transition-all duration-300 flex items-center justify-center gap-2 disabled:opacity-50"
             >
               {loading ? (
